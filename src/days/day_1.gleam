@@ -1,42 +1,57 @@
 import gleam/string
 import gleam/list
-import gleam/int
 import gleam/result
-import gleam/function
+import gleam/int
+import gleam/order
 
 pub fn pt_1(input: String) -> Int {
-  string.split(input, "\n")
-  |> list.map(fn(raw_depth) {
-    raw_depth
-    |> int.parse()
-    |> result.unwrap(0)
-  })
-  |> list.window(2)
-  |> list.map(fn(depths) {
-    let [first, second] = depths
-    second > first
-  })
-  |> list.filter(function.identity)
-  |> list.length()
+  input
+  |> string.split("\n")
+  |> group_calories()
+  |> list.map(sum)
+  |> find_max()
 }
 
 pub fn pt_2(input: String) -> Int {
-  string.split(input, "\n")
-  |> list.map(fn(raw_depth) {
-    raw_depth
-    |> int.parse()
-    |> result.unwrap(0)
+  input
+  |> string.split("\n")
+  |> group_calories()
+  |> list.map(sum)
+  |> list.sort(fn(a, b) {
+    int.compare(a, b)
+    |> order.reverse()
   })
-  |> list.window(3)
-  |> list.map(fn(depths) {
-    let [first, second, third] = depths
-    first + second + third
-  })
-  |> list.window(2)
-  |> list.map(fn(depths) {
-    let [first, second] = depths
-    second > first
-  })
-  |> list.filter(function.identity)
-  |> list.length()
+  |> list.take(3)
+  |> sum()
+}
+
+fn find_max(nums: List(Int)) -> Int {
+  list.fold(nums, 0, int.max)
+}
+
+fn sum(nums: List(Int)) -> Int {
+  list.fold(nums, 0, int.add)
+}
+
+fn group_calories(calories_items: List(String)) -> List(List(Int)) {
+  list.fold(
+    calories_items,
+    [[]],
+    fn(acc, cur) {
+      case cur {
+        "" -> [[], ..acc]
+        raw -> {
+          let calories = parse_calories(raw)
+          let [first, ..rest] = acc
+          [[calories, ..first], ..rest]
+        }
+      }
+    },
+  )
+}
+
+fn parse_calories(raw: String) -> Int {
+  raw
+  |> int.parse()
+  |> result.unwrap(0)
 }
