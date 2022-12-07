@@ -2,7 +2,6 @@ import gleam/string
 import gleam/map
 import gleam/list
 import gleam/int
-import gleam/io
 import days/day_5/stack
 import days/day_5/crate_state
 
@@ -13,18 +12,12 @@ type TransferNCratesFn =
   fn(stack.Stack(Crate), stack.Stack(Crate), Int) ->
     #(stack.Stack(Crate), stack.Stack(Crate))
 
-pub fn pt_1(input: String) -> Int {
+pub fn pt_1(input: String) -> String {
   solve(input, transfer_n_crates_1)
-  |> io.debug()
-
-  1
 }
 
-pub fn pt_2(input: String) -> Int {
+pub fn pt_2(input: String) -> String {
   solve(input, transfer_n_crates_2)
-  |> io.debug()
-
-  1
 }
 
 fn solve(input: String, transfer_n_crates: TransferNCratesFn) -> String {
